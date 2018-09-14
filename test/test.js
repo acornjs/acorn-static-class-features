@@ -199,9 +199,9 @@ describe("acorn-static-class-features", function () {
         })
       })
     } },
-  ];
+  ]
 
-  [
+  ;[
     { body: "static x", passes: true, ast: start => newNode(start, {
       type: "FieldDefinition",
       end: start + 8,
@@ -323,8 +323,8 @@ describe("acorn-static-class-features", function () {
   ].forEach(bodyInput => {
     const body = bodyInput.body, passes = bodyInput.passes, bodyAst = bodyInput.ast
     classes.forEach(input => {
-      const text = input.text, options = input.options || {}, ast = input.ast;
-      (passes ? test : testFail)(text.replace("%s", body), ast(bodyAst), options)
+      const text = input.text, options = input.options || {}, ast = input.ast
+      ;(passes ? test : testFail)(text.replace("%s", body), ast(bodyAst), options)
     })
   })
 
@@ -401,8 +401,8 @@ describe("acorn-static-class-features", function () {
   ].forEach(bodyInput => {
     const body = bodyInput.body, passes = bodyInput.passes, bodyAst = bodyInput.ast
     classes.forEach(input => {
-      const text = input.text, options = input.options || {}, ast = input.ast;
-      (passes ? test : testFail)(text.replace("%s", body), ast(bodyAst), options)
+      const text = input.text, options = input.options || {}, ast = input.ast
+      ;(passes ? test : testFail)(text.replace("%s", body), ast(bodyAst), options)
     })
   })
 })

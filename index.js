@@ -66,7 +66,7 @@ module.exports = function(Parser) {
       const node = this.startNode()
 
       const tryContextual = (k, noLineBreak) => {
-        if (typeof noLineBreak == 'undefined') noLineBreak = false
+        if (typeof noLineBreak == "undefined") noLineBreak = false
         const start = this.start, startLoc = this.startLoc
         if (!this.eatContextual(k)) return false
         if (this.type !== tt.parenL && (!noLineBreak || !this.canInsertSemicolon())) return true
