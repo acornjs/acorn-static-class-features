@@ -36,7 +36,7 @@ describe("acorn-static-class-features", function () {
   testFail("class A { static #a; static #a }", "Duplicate private element (1:21)")
   testFail("class A { static a = A.#a }", "Usage of undeclared private name (1:23)")
   testFail("class A { static a = () => arguments }", "A static class field initializer may not contain arguments (1:27)")
-  testFail("class A { static a = () => super() }", "A static class field initializer may not contain super (1:27)")
+  testFail("class A { static a = () => super() }", "'super' keyword outside a method (1:27)")
   testFail("class A { static # a }", "Unexpected token (1:19)")
   testFail("class A { static #a; a() { A.# a } }", "Unexpected token (1:31)")
   test(`class C {
@@ -341,7 +341,7 @@ describe("acorn-static-class-features", function () {
   testFail("a = { static #ab() {} }", "Unexpected token (1:13)")
   testFail("class A { static [{#ab() {}}]() {} }", "Unexpected token (1:19)")
   testFail("class A{ static # a() {}}", "Unexpected token (1:18)")
-  testFail("class C{ static #method() { super(); } };", "A class method that is not a constructor may not contain a direct super (1:28)")
+  testFail("class C{ static #method() { super(); } };", "super() call outside constructor of a subclass (1:28)")
   test("class C{ static #method() { super.y(); } };")
 
   ;[
@@ -405,4 +405,5 @@ describe("acorn-static-class-features", function () {
       ;(passes ? test : testFail)(text.replace("%s", body), ast(bodyAst), options)
     })
   })
+  test("class A extends B { constructor() { super() } }")
 })
