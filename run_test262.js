@@ -7,7 +7,9 @@ const acorn = require("acorn")
 const Parser = acorn.Parser.extend(require("."))
 
 const unsupportedFeatures = [
-  "class-fields-public"
+  "BigInt",
+  "class-fields-public",
+  "class-methods-private"
 ]
 
 const implementedFeatures = [
