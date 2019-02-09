@@ -4,7 +4,6 @@ const skipWhiteSpace = /(?:\s|\/\/.*|\/\*[^]*?\*\/)*/g
 
 const acorn = require("acorn")
 const tt = acorn.tokTypes
-const TokenType = acorn.TokenType
 
 function maybeParseFieldValue(field) {
   if (this.eat(tt.eq)) {
@@ -15,50 +14,12 @@ function maybeParseFieldValue(field) {
   } else field.value = null
 }
 
-function parsePrivateName() {
-  const node = this.startNode()
-  node.name = this.value
-  this.next()
-  this.finishNode(node, "PrivateName")
-  if (this.options.allowReserved == "never") this.checkUnreserved(node)
-  return node
-}
-
-const privateNameToken = new TokenType("privateName")
+const privateClassElements = require("acorn-private-class-elements")
 
 module.exports = function(Parser) {
-  return class extends Parser {
-    // Parse # token
-    getTokenFromCode(code) {
-      if (code === 35) {
-        ++this.pos
-        const word = this.readWord1()
-        return this.finishToken(privateNameToken, word)
-      }
-      return super.getTokenFromCode(code)
-    }
+  const ExtendedParser = privateClassElements(Parser)
 
-    // Manage stacks and check for undeclared private static names
-    parseClass(node, isStatement) {
-      this._privateBoundNamesStack = this._privateBoundNamesStack || []
-      const privateBoundNames = Object.create(this._privateBoundNamesStack[this._privateBoundNamesStack.length - 1] || null)
-      this._privateBoundNamesStack.push(privateBoundNames)
-      this._unresolvedPrivateNamesStack = this._unresolvedPrivateNamesStack || []
-      const unresolvedPrivateNames = Object.create(null)
-      this._unresolvedPrivateNamesStack.push(unresolvedPrivateNames)
-      const _return = super.parseClass(node, isStatement)
-      this._privateBoundNamesStack.pop()
-      this._unresolvedPrivateNamesStack.pop()
-      if (!this._unresolvedPrivateNamesStack.length) {
-        const names = Object.keys(unresolvedPrivateNames)
-        if (names.length) {
-          names.sort((n1, n2) => unresolvedPrivateNames[n1] - unresolvedPrivateNames[n2])
-          this.raise(unresolvedPrivateNames[names[0]], "Usage of undeclared private name")
-        }
-      } else Object.assign(this._unresolvedPrivateNamesStack[this._unresolvedPrivateNamesStack.length - 1], unresolvedPrivateNames)
-      return _return
-    }
-
+  return class extends ExtendedParser {
     // Parse private fields
     parseClassElement(_constructorAllowsSuper) {
       if (this.eat(tt.semi)) return null
@@ -107,18 +68,8 @@ module.exports = function(Parser) {
           node.kind = "set"
         }
       }
-      if (this.type.label === privateNameToken.label) { // Don't use object identity for interop with private-methods
-        node.key = parsePrivateName.call(this)
-        node.computed = false
-        if (node.key.name === "constructor") {
-          this.raise(node.key.start, "Classes may not have a private static property named constructor")
-        }
-
-        const privateBoundNames = this._privateBoundNamesStack[this._privateBoundNamesStack.length - 1]
-        if (Object.prototype.hasOwnProperty.call(privateBoundNames, node.key.name) && !(node.kind === "get" && privateBoundNames[node.key.name] === "set") && !(node.kind === "set" && privateBoundNames[node.key.name] === "get")) this.raise(node.start, "Duplicate private element")
-        privateBoundNames[node.key.name] = node.kind || true
-
-        delete this._unresolvedPrivateNamesStack[this._unresolvedPrivateNamesStack.length - 1][node.key.name]
+      if (this.type === this.privateNameToken) {
+        this.parsePrivateClassElementName(node)
         if (this.type !== tt.parenL) {
           if (node.key.name === "prototype") {
             this.raise(node.key.start, "Classes may not have a private static property named prototype")
@@ -156,11 +107,7 @@ module.exports = function(Parser) {
     // Parse public static fields
     parseClassMethod(method, isGenerator, isAsync, _allowsDirectSuper) {
       if (isGenerator || isAsync || method.kind != "method" || !method.static || this.options.ecmaVersion < 8 || this.type == tt.parenL) {
-        const oldInPrivateClassMethod = this._inPrivateClassMethod
-        this._inPrivateClassMethod = method.key.type == "PrivateName"
-        const ret = super.parseClassMethod.apply(this, arguments)
-        this._inPrivateClassMethod = oldInPrivateClassMethod
-        return ret
+        return super.parseClassMethod.apply(this, arguments)
       }
       maybeParseFieldValue.call(this, method)
       delete method.kind
@@ -169,57 +116,11 @@ module.exports = function(Parser) {
       return method
     }
 
-    // Parse private element access
-    parseSubscripts(base, startPos, startLoc, noCalls) {
-      for (let computed; ;) {
-        if ((computed = this.eat(tt.bracketL)) || this.eat(tt.dot)) {
-          let node = this.startNodeAt(startPos, startLoc)
-          node.object = base
-          if (computed) {
-            node.property = this.parseExpression()
-          } else if (this.type.label === privateNameToken.label) { // Don't use object identity for interop with private-methods
-            node.property = parsePrivateName.call(this)
-            if (!this._privateBoundNamesStack.length || !this._privateBoundNamesStack[this._privateBoundNamesStack.length - 1][node.property.name]) {
-              this._unresolvedPrivateNamesStack[this._unresolvedPrivateNamesStack.length - 1][node.property.name] = node.property.start
-            }
-          } else {
-            node.property = this.parseIdent(true)
-          }
-          node.computed = Boolean(computed)
-          if (computed) this.expect(tt.bracketR)
-          base = this.finishNode(node, "MemberExpression")
-        } else {
-          return super.parseSubscripts(base, startPos, startLoc, noCalls)
-        }
-      }
-    }
-
-    // Prohibit delete of private class elements
-    parseMaybeUnary(refDestructuringErrors, sawUnary) {
-      const _return = super.parseMaybeUnary(refDestructuringErrors, sawUnary)
-      if (_return.operator == "delete") {
-        if (_return.argument.type == "MemberExpression" && _return.argument.property.type == "PrivateName") {
-          this.raise(_return.start, "Private elements may not be deleted")
-        }
-      }
-      return _return
-    }
-
     // Prohibit arguments in class field initializers
     parseIdent(liberal, isBinding) {
       const ident = super.parseIdent(liberal, isBinding)
       if (this._inStaticFieldValue && ident.name == "arguments") this.raise(ident.start, "A static class field initializer may not contain arguments")
       return ident
-    }
-
-    // Prohibit super in class field initializers
-    // Prohibit direct super in private methods
-    // FIXME: This is not necessary in acorn >= 6.0.3
-    parseExprAtom(refDestructuringErrors) {
-      const atom = super.parseExprAtom(refDestructuringErrors)
-      if (this._inStaticFieldValue && atom.type == "Super") this.raise(atom.start, "A static class field initializer may not contain super")
-      if (this._inPrivateClassMethod && atom.type == "Super" && this.type == tt.parenL) this.raise(atom.start, "A class method that is not a constructor may not contain a direct super")
-      return atom
     }
   }
 }

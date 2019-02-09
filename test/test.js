@@ -336,7 +336,7 @@ describe("acorn-static-class-features", function () {
   test("class A { static get #a() {}; static set #a(newA) {} }")
   testFail("class A { a() { A.#a } }", "Usage of undeclared private name (1:18)")
   testFail("class A { a() { A.#a } b() { A.#b } }", "Usage of undeclared private name (1:18)")
-  testFail("class A { static #constructor() {} }", "Classes may not have a private static property named constructor (1:17)")
+  testFail("class A { static #constructor() {} }", "Classes may not have a private element named constructor (1:17)")
   testFail("class A { static #[ab]() {} }", "Unexpected token (1:18)")
   testFail("a = { static #ab() {} }", "Unexpected token (1:13)")
   testFail("class A { static [{#ab() {}}]() {} }", "Unexpected token (1:19)")
