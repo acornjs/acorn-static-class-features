@@ -7,7 +7,6 @@ const acorn = require("acorn")
 const Parser = acorn.Parser.extend(require("."))
 
 const unsupportedFeatures = [
-  "BigInt",
   "class-fields-public",
   "class-methods-private"
 ]
@@ -19,7 +18,7 @@ const implementedFeatures = [
 ]
 
 run(
-  (content, options) => Parser.parse(content, {sourceType: options.sourceType, ecmaVersion: 10}),
+  (content, options) => Parser.parse(content, {sourceType: options.sourceType, ecmaVersion: 11}),
   {
     testsDirectory: path.dirname(require.resolve("test262/package.json")),
     skip: test => (!test.attrs.features || !implementedFeatures.some(f => test.attrs.features.includes(f)) || unsupportedFeatures.some(f => test.attrs.features.includes(f))),
