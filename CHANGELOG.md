@@ -1,3 +1,9 @@
+## 0.2.1 (2020-04-25)
+
+* Mark as compatible with acorn v7
+* Use injected acorn instance if available
+* Uses `Object.getPrototypeOf` if available instead of `__proto__`
+
 ## 0.2.0 (2019-02-09)
 
 * Require acorn >= 6.1.0
