@@ -1,23 +1,23 @@
 "use strict"
 
-const acorn = require("acorn")
-const tt = acorn.tokTypes
-
-function maybeParseFieldValue(field) {
-  if (this.eat(tt.eq)) {
-    const oldInFieldValue = this._inStaticFieldValue
-    this._inStaticFieldValue = true
-    field.value = this.parseExpression()
-    this._inStaticFieldValue = oldInFieldValue
-  } else field.value = null
-}
-
 const privateClassElements = require("acorn-private-class-elements")
 
 module.exports = function(Parser) {
   const ExtendedParser = privateClassElements(Parser)
 
+  const acorn = Parser.acorn || require("acorn")
+  const tt = acorn.tokTypes
+
   return class extends ExtendedParser {
+    _maybeParseFieldValue(field) {
+      if (this.eat(tt.eq)) {
+        const oldInFieldValue = this._inStaticFieldValue
+        this._inStaticFieldValue = true
+        field.value = this.parseExpression()
+        this._inStaticFieldValue = oldInFieldValue
+      } else field.value = null
+    }
+
     // Parse fields
     parseClassElement(_constructorAllowsSuper) {
       if (this.options.ecmaVersion < 8 || !this.isContextual("static")) {
@@ -56,7 +56,7 @@ module.exports = function(Parser) {
         this.raise(node.key.start, "Classes may not have a static property named prototype")
       }
 
-      maybeParseFieldValue.call(this, node)
+      this._maybeParseFieldValue(node)
       this.finishNode(node, "FieldDefinition")
       this.semicolon()
       return node
