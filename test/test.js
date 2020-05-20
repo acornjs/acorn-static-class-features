@@ -413,4 +413,10 @@ describe("acorn-static-class-features", function () {
     })
   })
   test("class A extends B { constructor() { super() } }")
+  test(`class C {
+    static f = 'test262';
+    static 'g';
+    static 0 = 'bar';
+    static [computed];
+  }`)
 })

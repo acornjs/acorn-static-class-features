@@ -8,6 +8,7 @@ const Parser = acorn.Parser.extend(require("."))
 
 const unsupportedFeatures = [
   "class-fields-public",
+  "class-fields-private",
   "class-methods-private"
 ]
 
