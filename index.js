@@ -12,7 +12,7 @@ module.exports = function(Parser) {
     _maybeParseFieldValue(field) {
       if (this.eat(tt.eq)) {
         const oldInFieldValue = this._inStaticFieldScope
-        this._inStaticFieldScope = this.currentThisScope();
+        this._inStaticFieldScope = this.currentThisScope()
         field.value = this.parseExpression()
         this._inStaticFieldScope = oldInFieldValue
       } else field.value = null
