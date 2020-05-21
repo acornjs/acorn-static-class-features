@@ -1,3 +1,8 @@
+## 0.2.2 (2020-05-21)
+
+* Allow `arguments` usage in nested static methods
+* Allow numeric class element names
+
 ## 0.2.1 (2020-04-25)
 
 * Mark as compatible with acorn v7
