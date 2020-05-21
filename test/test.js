@@ -43,6 +43,13 @@ describe("acorn-static-class-features", function () {
     static async * #method() {
     }
   }`)
+  test(`class C {
+    static a = () => {
+      function p () {
+        console.log(arguments);
+      }
+    }
+  }`)
 
   const classes = [
     { text: "class A { %s }", ast: getBody => {
