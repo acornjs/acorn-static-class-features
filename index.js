@@ -11,10 +11,10 @@ module.exports = function(Parser) {
   return class extends ExtendedParser {
     _maybeParseFieldValue(field) {
       if (this.eat(tt.eq)) {
-        const oldInFieldValue = this._inStaticFieldValue
-        this._inStaticFieldValue = true
+        const oldInFieldValue = this._inStaticFieldScope
+        this._inStaticFieldScope = this.currentThisScope();
         field.value = this.parseExpression()
-        this._inStaticFieldValue = oldInFieldValue
+        this._inStaticFieldScope = oldInFieldValue
       } else field.value = null
     }
 
@@ -74,7 +74,9 @@ module.exports = function(Parser) {
     // Prohibit arguments in class field initializers
     parseIdent(liberal, isBinding) {
       const ident = super.parseIdent(liberal, isBinding)
-      if (this._inStaticFieldValue && ident.name == "arguments") this.raise(ident.start, "A static class field initializer may not contain arguments")
+      if (this._inStaticFieldScope && this.currentThisScope() === this._inStaticFieldScope && ident.name == "arguments") {
+        this.raise(ident.start, "A static class field initializer may not contain arguments")
+      }
       return ident
     }
   }
