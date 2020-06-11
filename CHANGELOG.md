@@ -1,3 +1,7 @@
+## 0.2.3 (2020-06-11)
+
+* Don't break acorn's optional chaining support
+
 ## 0.2.2 (2020-05-21)
 
 * Allow `arguments` usage in nested static methods
