@@ -24,10 +24,10 @@
   "version": "0.2.2",
   "devDependencies": {
     "acorn": "^7.0.0",
-    "eslint": "^6",
+    "eslint": "^7",
     "eslint-plugin-node": "^11",
-    "mocha": "^7",
-    "test262": "git+https://github.com/tc39/test262.git#2f1d28ddcaa82004236619876c31359d8ca81414",
+    "mocha": "^8",
+    "test262": "git+https://github.com/tc39/test262.git#adf2cf4204a748463cacb68f07d0d006b00c3821",
     "test262-parser-runner": "^0.5.0"
   },
   "dependencies": {

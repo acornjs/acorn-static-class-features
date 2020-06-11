@@ -23,6 +23,6 @@ run(
   {
     testsDirectory: path.dirname(require.resolve("test262/package.json")),
     skip: test => (!test.attrs.features || !implementedFeatures.some(f => test.attrs.features.includes(f)) || unsupportedFeatures.some(f => test.attrs.features.includes(f))),
-    whitelist: fs.readFileSync("./test262.whitelist", "utf8").split("\n").filter(v => v && v[0] !== "#")
+    whitelist: [],
   }
 )
