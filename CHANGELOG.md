@@ -1,3 +1,9 @@
+## 0.2.4 (2020-08-13)
+
+* Mark as compatible with acorn@8
+* Allow super in field initializer
+* Support keywords as field name
+
 ## 0.2.3 (2020-06-11)
 
 * Don't break acorn's optional chaining support
