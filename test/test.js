@@ -419,7 +419,7 @@ describe("acorn-static-class-features", function () {
     static 0 = 'bar';
     static [computed];
   }`)
-  test('class X{static delete}')
+  test("class X{static delete}")
   test(`class Foo extends Bar {
   static field = super.field + 1;
 }`)

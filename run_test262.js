@@ -1,6 +1,5 @@
 "use strict"
 
-const fs = require("fs")
 const path = require("path")
 const run = require("test262-parser-runner")
 const acorn = require("acorn")

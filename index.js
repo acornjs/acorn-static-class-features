@@ -58,7 +58,7 @@ module.exports = function(Parser) {
 
       this.enterScope(64 | 2 | 1) // See acorn's scopeflags.js
       this._maybeParseFieldValue(node)
-      this.exitScope();
+      this.exitScope()
       this.finishNode(node, "FieldDefinition")
       this.semicolon()
       return node
