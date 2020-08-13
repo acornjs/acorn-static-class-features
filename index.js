@@ -56,7 +56,9 @@ module.exports = function(Parser) {
         this.raise(node.key.start, "Classes may not have a static property named prototype")
       }
 
+      this.enterScope(64 | 2 | 1) // See acorn's scopeflags.js
       this._maybeParseFieldValue(node)
+      this.exitScope();
       this.finishNode(node, "FieldDefinition")
       this.semicolon()
       return node
