@@ -419,4 +419,5 @@ describe("acorn-static-class-features", function () {
     static 0 = 'bar';
     static [computed];
   }`)
+  test('class X{static delete}')
 })

@@ -26,7 +26,7 @@ module.exports = function(Parser) {
 
       const branch = this._branch()
       branch.next()
-      if ([tt.name, tt.bracketL, tt.string, tt.num, this.privateNameToken].indexOf(branch.type) == -1) {
+      if ([tt.name, tt.bracketL, tt.string, tt.num, this.privateNameToken].indexOf(branch.type) == -1 && !branch.type.keyword) {
         return super.parseClassElement.apply(this, arguments)
       }
       if (branch.type == tt.bracketL) {
