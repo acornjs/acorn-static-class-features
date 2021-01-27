@@ -103,10 +103,10 @@ describe("acorn-static-class-features", function () {
           type: "ClassBody",
           end: body.end + 13,
           body: [body, newNode(body.end + 2, {
-            type: "FieldDefinition",
+            type: "PropertyDefinition",
             end: body.end + 11,
             key: newNode(body.end + 9, {
-              type: "PrivateName",
+              type: "PrivateIdentifier",
               end: body.end + 11,
               name: "y"
             }),
@@ -210,7 +210,7 @@ describe("acorn-static-class-features", function () {
 
   ;[
     { body: "static x", passes: true, ast: start => newNode(start, {
-      type: "FieldDefinition",
+      type: "PropertyDefinition",
       end: start + 8,
       key: newNode(start + 7, {
         type: "Identifier",
@@ -222,7 +222,7 @@ describe("acorn-static-class-features", function () {
       static: true
     }) },
     { body: "static x = 0", passes: true, ast: start => newNode(start, {
-      type: "FieldDefinition",
+      type: "PropertyDefinition",
       end: start + 12,
       key: newNode(start + 7, {
         type: "Identifier",
@@ -239,7 +239,7 @@ describe("acorn-static-class-features", function () {
       static: true
     }) },
     { body: "static [x]", passes: true, ast: start => newNode(start, {
-      type: "FieldDefinition",
+      type: "PropertyDefinition",
       end: start + 10,
       computed: true,
       key: newNode(start + 8, {
@@ -251,7 +251,7 @@ describe("acorn-static-class-features", function () {
       static: true
     }) },
     { body: "static [x] = 0", passes: true, ast: start => newNode(start, {
-      type: "FieldDefinition",
+      type: "PropertyDefinition",
       end: start + 14,
       computed: true,
       key: newNode(start + 8, {
@@ -268,11 +268,11 @@ describe("acorn-static-class-features", function () {
       static: true
     }) },
     { body: "static #x", passes: true, ast: start => newNode(start, {
-      type: "FieldDefinition",
+      type: "PropertyDefinition",
       end: start + 9,
       computed: false,
       key: newNode(start + 7, {
-        type: "PrivateName",
+        type: "PrivateIdentifier",
         end: start + 9,
         name: "x"
       }),
@@ -280,11 +280,11 @@ describe("acorn-static-class-features", function () {
       static: true
     }) },
     { body: "static #x = 0", passes: true, ast: start => newNode(start, {
-      type: "FieldDefinition",
+      type: "PropertyDefinition",
       end: start + 13,
       computed: false,
       key: newNode(start + 7, {
-        type: "PrivateName",
+        type: "PrivateIdentifier",
         end: start + 9,
         name: "x"
       }),
@@ -298,7 +298,7 @@ describe("acorn-static-class-features", function () {
     }) },
 
     { body: "static async", passes: true, ast: start => newNode(start, {
-      type: "FieldDefinition",
+      type: "PropertyDefinition",
       end: start + 12,
       key: newNode(start + 7, {
         type: "Identifier",
@@ -311,7 +311,7 @@ describe("acorn-static-class-features", function () {
     }) },
 
     { body: "static async = 5", passes: true, ast: start => newNode(start, {
-      type: "FieldDefinition",
+      type: "PropertyDefinition",
       end: start + 16,
       key: newNode(start + 7, {
         type: "Identifier",
@@ -357,7 +357,7 @@ describe("acorn-static-class-features", function () {
       end: start + 14,
       computed: false,
       key: newNode(start + 7, {
-        type: "PrivateName",
+        type: "PrivateIdentifier",
         end: start + 9,
         name: "x"
       }),
@@ -383,7 +383,7 @@ describe("acorn-static-class-features", function () {
       end: start + 18,
       computed: false,
       key: newNode(start + 11, {
-        type: "PrivateName",
+        type: "PrivateIdentifier",
         end: start + 13,
         name: "x"
       }),

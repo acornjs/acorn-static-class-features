@@ -26,7 +26,7 @@ module.exports = function(Parser) {
 
       const branch = this._branch()
       branch.next()
-      if ([tt.name, tt.bracketL, tt.string, tt.num, this.privateNameToken].indexOf(branch.type) == -1 && !branch.type.keyword) {
+      if ([tt.name, tt.bracketL, tt.string, tt.num, this.privateIdentifierToken].indexOf(branch.type) == -1 && !branch.type.keyword) {
         return super.parseClassElement.apply(this, arguments)
       }
       if (branch.type == tt.bracketL) {
@@ -43,7 +43,7 @@ module.exports = function(Parser) {
 
       const node = this.startNode()
       node.static = this.eatContextual("static")
-      if (this.type == this.privateNameToken) {
+      if (this.type == this.privateIdentifierToken) {
         this.parsePrivateClassElementName(node)
       } else {
         this.parsePropertyName(node)
@@ -59,14 +59,14 @@ module.exports = function(Parser) {
       this.enterScope(64 | 2 | 1) // See acorn's scopeflags.js
       this._maybeParseFieldValue(node)
       this.exitScope()
-      this.finishNode(node, "FieldDefinition")
+      this.finishNode(node, "PropertyDefinition")
       this.semicolon()
       return node
     }
 
     // Parse private static methods
     parsePropertyName(prop) {
-      if (prop.static && this.type == this.privateNameToken) {
+      if (prop.static && this.type == this.privateIdentifierToken) {
         this.parsePrivateClassElementName(prop)
       } else {
         super.parsePropertyName(prop)
