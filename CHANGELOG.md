@@ -1,3 +1,7 @@
+## 1.0.0 (2021-02-08)
+
+* Update AST node names to match [ESTree](https://github.com/estree/estree/blob/master/experimental/class-features.md)
+
 ## 0.2.4 (2020-08-13)
 
 * Mark as compatible with acorn@8
